@@ -3,20 +3,7 @@ import { cn } from '@/lib/utils';
 const STATUS_PHRASES = ['Thinking…', 'Analysing…', 'Almost there…'];
 
 /** Tool name -> friendly loading message (only common ones). Keys normalized to lowercase with underscores. */
-const TOOL_MESSAGES: Record<string, string> = {
-  update_flight_risk: 'Updating flights at risk',
-  update_checkin_agent: 'Updating check-in agent',
-  update_border_officer: 'Updating border officer',
-  confirm_arrival: 'Confirming arrival',
-  back_to_normal: 'Checking status',
-  query_checkin_agent_staffing: 'Checking agent staffing',
-  query_available_agents_for_redeployment: 'Finding available agents',
-  query_flights_at_risk: 'Checking flights at risk',
-  query_staffing_duties: 'Loading staffing duties',
-  query_checkin_performance_metrics: 'Loading performance metrics',
-  create_checkin_incident: 'Creating check-in incident',
-  create_border_incident: 'Creating border incident',
-};
+const TOOL_MESSAGES: Record<string, string> = {};
 
 const ACTIVE_TOOL_STATES = new Set([
   'input-streaming',

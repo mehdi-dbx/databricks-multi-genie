@@ -5,16 +5,6 @@ import { Response } from './elements/response';
 import { MessageContent } from './elements/message';
 import { TurnaroundStartedCard } from './elements/turnaround-started-card';
 import { LiveTurnaroundChecklistCard } from './elements/live-turnaround-checklist';
-import { CheckinRootCauseCard } from './elements/checkin-root-cause-card';
-import { StaffingDutyCard } from './elements/staffing-duty-card';
-import { CheckinConsequencesCard } from './elements/checkin-consequences-card';
-import { CheckinRecommendedActionCard } from './elements/checkin-recommended-action-card';
-import { CheckinAvailableAgents } from './elements/checkin-available-agents';
-import { CheckinUpdateCard } from './elements/checkin-update-card';
-import { CheckinPerformanceIssueCard } from './elements/checkin-performance-issue-card';
-import { CheckinImpactCard } from './elements/checkin-impact-card';
-import { FollowUpActions } from './elements/follow-up-actions';
-import { CheckinRootCauseActionsCard } from './elements/checkin-root-cause-actions-card';
 import { KnowledgeBaseCard } from './elements/knowledge-base-card';
 import { parseResponseBlocks, hasResponseBlocks } from '@/lib/response-blocks';
 import {
@@ -110,7 +100,6 @@ const PurePreviewMessage = ({
     'User';
   const userInitials = getInitials(displayName);
 
-  // Hook for handling MCP approval requests
   const { submitApproval, isSubmitting, pendingApprovalId } = useApproval({
     addToolApprovalResponse,
     sendMessage,
@@ -120,13 +109,11 @@ const PurePreviewMessage = ({
     (part) => part.type === 'file',
   );
 
-  // Extract non-OAuth error parts separately (OAuth errors are rendered inline)
   const errorParts = React.useMemo(
     () =>
       message.parts
         .filter((part) => part.type === 'data-error')
         .filter((part) => {
-          // OAuth errors are rendered inline, not in the error section
           return !isCredentialErrorMessage(part.data);
         }),
     [message.parts],
@@ -135,11 +122,6 @@ const PurePreviewMessage = ({
   useDataStream();
 
   const partSegments = React.useMemo(
-    /**
-     * We segment message parts into segments that can be rendered as a single component.
-     * Used to render citations as part of the associated text.
-     * Note: OAuth errors are included here for inline rendering, non-OAuth errors are filtered out.
-     */
     () =>
       createMessagePartSegments(
         message.parts.filter(
@@ -150,12 +132,10 @@ const PurePreviewMessage = ({
     [message.parts],
   );
 
-  // Check if message only contains non-OAuth errors (no other content)
   const hasOnlyErrors = React.useMemo(() => {
     const nonErrorParts = message.parts.filter(
       (part) => part.type !== 'data-error',
     );
-    // Only consider non-OAuth errors for this check
     return errorParts.length > 0 && nonErrorParts.length === 0;
   }, [message.parts, errorParts.length]);
 
@@ -268,72 +248,6 @@ const PurePreviewMessage = ({
                               />
                             );
                           }
-                          if (seg.type === 'checkin_root_cause') {
-                            return (
-                              <CheckinRootCauseCard
-                                key={i}
-                                zone={seg.parsed.zone}
-                                items={seg.parsed.items}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_consequences') {
-                            return (
-                              <CheckinConsequencesCard
-                                key={i}
-                                items={seg.parsed.items}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_recommended_action') {
-                            return (
-                              <CheckinRecommendedActionCard
-                                key={i}
-                                items={seg.parsed.items}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_available_agents') {
-                            return (
-                              <CheckinAvailableAgents
-                                key={i}
-                                agents={seg.parsed.agents}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_update') {
-                            return (
-                              <CheckinUpdateCard
-                                key={i}
-                                zone={seg.parsed.zone}
-                                body={seg.parsed.body}
-                                agent={seg.parsed.agent}
-                                flights={seg.parsed.flights}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_performance_issue') {
-                            return (
-                              <CheckinPerformanceIssueCard
-                                key={i}
-                                zone={seg.parsed.zone}
-                                pctChange={seg.parsed.pctChange}
-                                windowMins={seg.parsed.windowMins}
-                                avgCheckin={seg.parsed.avgCheckin}
-                                baseline={seg.parsed.baseline}
-                                timestamp={seg.parsed.timestamp}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_impact') {
-                            return (
-                              <CheckinImpactCard
-                                key={i}
-                                count={seg.parsed.count}
-                                flights={seg.parsed.flights}
-                              />
-                            );
-                          }
                           if (seg.type === 'knowledge_base') {
                             return (
                               <KnowledgeBaseCard
@@ -344,79 +258,11 @@ const PurePreviewMessage = ({
                               />
                             );
                           }
-                          if (seg.type === 'staffing_duty') {
-                            return (
-                              <StaffingDutyCard
-                                key={i}
-                                zone={seg.parsed.zone}
-                                counter={seg.parsed.counter}
-                                assignedById={seg.parsed.assignedById}
-                                sendMessage={sendMessage}
-                              />
-                            );
-                          }
                           if (seg.type === 'refresh_table') {
                             return (
                               <RefreshTableTrigger
                                 key={i}
                                 table={seg.parsed.table}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_root_cause_actions') {
-                            const showButtons =
-                              !isReadonly && !isLoading && isLastMessage;
-                            return (
-                              <CheckinRootCauseActionsCard
-                                key={i}
-                                agents={seg.parsed.agents}
-                                actions={seg.parsed.actions}
-                                onConfirm={(selectedActionIds) =>
-                                  sendMessage({
-                                    role: 'user',
-                                    parts: [
-                                      {
-                                        type: 'text',
-                                        text: `yes (actions: ${selectedActionIds.join(', ')})`,
-                                      },
-                                    ],
-                                    metadata: { source: 'followup' },
-                                  })
-                                }
-                                disabled={!showButtons}
-                              />
-                            );
-                          }
-                          if (seg.type === 'checkin_followup') {
-                            const showButtons =
-                              !isReadonly && !isLoading && isLastMessage;
-                            const actionId = seg.parsed.actionId ?? '';
-                            return (
-                              <FollowUpActions
-                                key={i}
-                                question={seg.parsed.question}
-                                onValidate={() =>
-                                  sendMessage({
-                                    role: 'user',
-                                    parts: [
-                                      {
-                                        type: 'text',
-                                        text: actionId
-                                          ? `yes (action: ${actionId})`
-                                          : 'yes',
-                                      },
-                                    ],
-                                    metadata: { source: 'followup' },
-                                  })
-                                }
-                                onCancel={() =>
-                                  sendMessage({
-                                    role: 'user',
-                                    parts: [{ type: 'text', text: 'no' }],
-                                    metadata: { source: 'followup' },
-                                  })
-                                }
-                                disabled={!showButtons}
                               />
                             );
                           }
@@ -451,32 +297,23 @@ const PurePreviewMessage = ({
               }
             }
 
-            // Render Databricks tool calls and results
             if (part.type === `dynamic-tool`) {
               if (!showIntermediateSteps) return null;
               const { toolCallId, input, state, errorText, output, toolName } = part;
 
-              // Check if this is an MCP tool call by looking for approvalRequestId in metadata
-              // This works across all states (approval-requested, approval-denied, output-available)
               const isMcpApproval = part.callProviderMetadata?.databricks?.approvalRequestId != null;
               const mcpServerName = part.callProviderMetadata?.databricks?.mcpServerName?.toString();
 
-              // Extract approval outcome for 'approval-responded' state
-              // When addToolApprovalResponse is called, AI SDK sets the `approval` property
-              // on the tool-call part and changes state to 'approval-responded'
               const approved: boolean | undefined =
                 'approval' in part ? part.approval?.approved : undefined;
 
-
-              // When approved but only have approval status (not actual output), show as input-available
               const effectiveState: ToolState = (() => {
-                  if (part.providerExecuted && !isLoading && state === 'input-available') {
-                    return 'output-available'
-                  }
+                if (part.providerExecuted && !isLoading && state === 'input-available') {
+                  return 'output-available';
+                }
                 return state;
-              })()
+              })();
 
-              // Render MCP tool calls with special styling
               if (isMcpApproval) {
                 return (
                   <McpTool key={toolCallId} defaultOpen={true}>
@@ -530,7 +367,6 @@ const PurePreviewMessage = ({
                 );
               }
 
-              // Render regular tool calls
               return (
                 <Tool key={toolCallId} defaultOpen={true}>
                   <ToolHeader
@@ -563,7 +399,6 @@ const PurePreviewMessage = ({
               );
             }
 
-            // Support for citations/annotations
             if (type === 'source-url') {
               return (
                 <a
@@ -578,7 +413,6 @@ const PurePreviewMessage = ({
               );
             }
 
-            // Render OAuth errors inline
             if (type === 'data-error' && isCredentialErrorMessage(part.data)) {
               return (
                 <MessageOAuthError

@@ -4,12 +4,9 @@ import { AppHeader } from '@/components/AppHeader';
 import { AppSidebar } from '@/components/app-sidebar';
 import { EmbeddedChatPanel } from '@/components/embedded-chat-panel';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { TaskEventsListener } from '@/components/task-events-listener';
 import { ChatSendMessageProvider } from '@/contexts/ChatSendMessageContext';
-import { RoleProvider } from '@/contexts/RoleContext';
-import { TaskNotificationProvider } from '@/contexts/TaskNotificationContext';
-import { useSession } from '@/contexts/SessionContext';
 import { TableRefreshProvider } from '@/contexts/TableRefreshContext';
+import { useSession } from '@/contexts/SessionContext';
 import { generateUUID } from '@/lib/utils';
 
 export default function ChatLayout() {
@@ -20,7 +17,6 @@ export default function ChatLayout() {
 
   const [newChatId, setNewChatId] = useState(() => generateUUID());
 
-  // Keep sidebar tucked (icon-only) by default for the demo
   const sidebarDefaultOpen = false;
 
   const chatId =
@@ -57,26 +53,21 @@ export default function ChatLayout() {
   return (
     <SidebarProvider defaultOpen={sidebarDefaultOpen}>
       <ChatSendMessageProvider>
-        <RoleProvider>
-          <TaskNotificationProvider>
-            <TableRefreshProvider>
-              <TaskEventsListener />
-            <div className="flex h-svh w-full flex-col overflow-hidden">
-          <AppHeader />
-          <div className="flex min-h-0 min-w-0 flex-1 w-full overflow-hidden">
-            <AppSidebar
-              user={session.user}
-              preferredUsername={preferredUsername}
-            />
-            <SidebarInset className="min-h-0 min-w-0 flex-1 overflow-auto">
-              <Outlet />
-            </SidebarInset>
-            <EmbeddedChatPanel chatId={chatId} onNewChat={onNewChat} />
-          </div>
+        <TableRefreshProvider>
+          <div className="flex h-svh w-full flex-col overflow-hidden">
+            <AppHeader />
+            <div className="flex min-h-0 min-w-0 flex-1 w-full overflow-hidden">
+              <AppSidebar
+                user={session.user}
+                preferredUsername={preferredUsername}
+              />
+              <SidebarInset className="min-h-0 min-w-0 flex-1 overflow-auto">
+                <Outlet />
+              </SidebarInset>
+              <EmbeddedChatPanel chatId={chatId} onNewChat={onNewChat} />
             </div>
-            </TableRefreshProvider>
-          </TaskNotificationProvider>
-        </RoleProvider>
+          </div>
+        </TableRefreshProvider>
       </ChatSendMessageProvider>
     </SidebarProvider>
   );

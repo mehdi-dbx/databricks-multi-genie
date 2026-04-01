@@ -10,7 +10,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { useTheme } from 'next-themes';
 import { Sparkles } from 'lucide-react';
 
-const CUSTOMER_NAME = 'Airport Check-in Command Center';
+const CUSTOMER_NAME = 'TEVA Genie Gateway';
 
 export function AppHeader() {
   const { session, loading } = useSession();
@@ -39,7 +39,7 @@ export function AppHeader() {
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-600 px-3 py-1.5 font-medium text-white text-sm">
           <Sparkles className="h-4 w-4" />
-          Garv
+          Teva Data Explorer
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

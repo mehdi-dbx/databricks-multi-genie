@@ -288,23 +288,6 @@ export function Chat({
     return () => chatSendContext.registerSendMessage(null);
   }, [chatSendContext, sendMessage]);
 
-  useEffect(() => {
-    if (!chatSendContext) return;
-    const showStaffingDutyOnly = (zone: string, counter: string, assignedById: string) => {
-      const content = `\`\`\`staffing_duty\n${zone}|${counter}|${assignedById}\n\`\`\``;
-      setMessages([
-        {
-          id: generateUUID(),
-          role: 'assistant',
-          parts: [{ type: 'text', text: content }],
-          metadata: { createdAt: new Date().toISOString() },
-        },
-      ]);
-    };
-    chatSendContext.registerShowStaffingDutyOnly(showStaffingDutyOnly);
-    return () => chatSendContext.registerShowStaffingDutyOnly(null);
-  }, [chatSendContext, setMessages]);
-
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query');
 
