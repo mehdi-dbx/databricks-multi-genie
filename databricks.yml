@@ -1,0 +1,33 @@
+bundle:
+  name: teva-x
+
+resources:
+  experiments:
+    agent_experiment:
+      name: /Users/${workspace.current_user.userName}/${bundle.name}-${bundle.target}
+
+  apps:
+    agent_app:
+      name: "${bundle.target}-teva-genie-supervisor"
+      description: "Teva Genie Supervisor — multi-workspace AI routing agent"
+      source_code_path: ./
+
+      resources:
+        - name: 'experiment'
+          experiment:
+            experiment_id: "${resources.experiments.agent_experiment.id}"
+            permission: 'CAN_MANAGE'
+
+targets:
+  dev:
+    mode: development
+
+  default:
+    mode: production
+    default: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/default
+    resources:
+      apps:
+        agent_app:
+          name: 'teva-genie-supervisor'

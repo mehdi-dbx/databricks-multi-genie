@@ -1,0 +1,28 @@
+# Build artifacts
+e2e-chatbot-app-next/client/dist/
+e2e-chatbot-app-next/client/node_modules/
+e2e-chatbot-app-next/server/node_modules/
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Env files
+.env
+.env.local
+.env.*
+
+# Logs & runtime
+backend.log
+frontend.log
+node.log
+mlflow.db
+data/genie-capture-sql/
+
+# OS
+.DS_Store
