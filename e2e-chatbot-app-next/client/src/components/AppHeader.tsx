@@ -9,6 +9,7 @@ import {
 import { useSession } from '@/contexts/SessionContext';
 import { useTheme } from 'next-themes';
 import { Sparkles } from 'lucide-react';
+import tevaLogo from '@/assets/teva-logo.svg';
 
 const CUSTOMER_NAME = 'TEVA Genie Gateway';
 
@@ -32,9 +33,7 @@ export function AppHeader() {
         </span>
       </div>
       <div className="flex flex-1 items-center justify-center px-4">
-        <span className="font-bold text-muted-foreground text-lg">
-          {CUSTOMER_NAME}
-        </span>
+        <img src={tevaLogo} alt="Teva" className="h-9 w-auto" />
       </div>
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-600 px-3 py-1.5 font-medium text-white text-sm">

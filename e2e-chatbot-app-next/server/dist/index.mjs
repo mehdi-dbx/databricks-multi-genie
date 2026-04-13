@@ -1348,6 +1348,39 @@ tablesRouter.get("/:tableName", requireAuth, async (req, res) => {
 });
 
 //#endregion
+//#region src/routes/workspaces.ts
+const workspacesRouter = Router();
+workspacesRouter.use(authMiddleware);
+/**
+* GET /api/workspaces - Proxy to backend /workspaces
+* Returns [{ url: string, spaces: { space_id: string, title: string }[] }]
+*/
+workspacesRouter.get("/", requireAuth, async (_req, res) => {
+	let base = (process.env.API_PROXY || "").replace(/\/invocations\/?$/, "") || "http://127.0.0.1:8000";
+	if (base.startsWith("http://localhost:") || base.startsWith("https://localhost:")) base = base.replace("localhost", "127.0.0.1");
+	const url = `${base}/workspaces`;
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			const text = await response.text();
+			console.error("[workspaces] backend error", response.status, text.slice(0, 200));
+			return res.status(response.status).json({
+				error: "Backend error",
+				details: text.slice(0, 200)
+			});
+		}
+		const data = await response.json();
+		return res.json(data);
+	} catch (err) {
+		console.error("[workspaces] fetch error", url, err);
+		return res.status(502).json({
+			error: "Backend unavailable",
+			message: err instanceof Error ? err.message : "Unknown error"
+		});
+	}
+});
+
+//#endregion
 //#region src/index.ts
 const upload = multer({ storage: multer.memoryStorage() });
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -1532,6 +1565,7 @@ app.use("/api/session", sessionRouter);
 app.use("/api/messages", messagesRouter);
 app.use("/api/config", configRouter);
 app.use("/api/tables", tablesRouter);
+app.use("/api/workspaces", workspacesRouter);
 app.use("/api", (_req, res) => {
 	res.status(404).json({
 		error: "Not found",
