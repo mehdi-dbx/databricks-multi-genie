@@ -1,4 +1,4 @@
-# Genie Supervisor
+# Multi Genie Supervisor
 
 A single-entry-point AI agent that discovers every Genie Space across all Customer Databricks workspaces and routes user questions to the right one — transparently, without the user needing to know which workspace or dataset to query.
 
