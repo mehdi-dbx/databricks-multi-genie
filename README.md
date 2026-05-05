@@ -1,19 +1,19 @@
-# Teva Genie Supervisor
+# Genie Supervisor
 
-A single-entry-point AI agent that discovers every Genie Space across all Teva Databricks workspaces and routes user questions to the right one — transparently, without the user needing to know which workspace or dataset to query.
+A single-entry-point AI agent that discovers every Genie Space across all Customer Databricks workspaces and routes user questions to the right one — transparently, without the user needing to know which workspace or dataset to query.
 
 ---
 
 ## The Core Idea
 
-Teva's data lives across multiple Databricks workspaces, each containing multiple Genie Spaces tied to specific datasets. Instead of asking users to navigate those spaces manually, this project exposes **one endpoint** that acts as a supervisor agent:
+Customer data lives across multiple Databricks workspaces, each containing multiple Genie Spaces tied to specific datasets. Instead of asking users to navigate those spaces manually, this project exposes **one endpoint** that acts as a supervisor agent:
 
 ```
 User question
       │
       ▼
 ┌─────────────────────────────────┐
-│     Teva Genie Supervisor       │  ← single entry point
+│      Genie Supervisor       │  ← single entry point
 │  (LangGraph tool-calling agent) │
 └────────────┬────────────────────┘
              │  discovers & routes to
@@ -122,7 +122,7 @@ databricks bundle deploy
 databricks bundle run agent_app
 ```
 
-The deployed app name is `teva-genie-supervisor` (production) or `dev-teva-genie-supervisor` (development).
+The deployed app name is `Customer-genie-supervisor` (production) or `dev-Customer-genie-supervisor` (development).
 
 ---
 
