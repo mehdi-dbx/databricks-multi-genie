@@ -13,7 +13,7 @@ User question
       │
       ▼
 ┌─────────────────────────────────┐
-│      Genie Supervisor       │  ← single entry point
+│      Genie Supervisor           │  ← single entry point
 │  (LangGraph tool-calling agent) │
 └────────────┬────────────────────┘
              │  discovers & routes to
